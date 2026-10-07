@@ -15,10 +15,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public UserResponse createUser(UserRequest userRequest) {
@@ -49,6 +51,8 @@ public class UserService {
             throw new BadRequestException("Wrong password");
         }
 
-        return new LoginResponse("Login Successful");
+        String token = jwtService.generateToken(user.getEmail());
+
+        return new LoginResponse(token);
     }
 }
